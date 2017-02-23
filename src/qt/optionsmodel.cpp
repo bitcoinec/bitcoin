@@ -18,6 +18,7 @@
 #include "netbase.h"
 #include "txdb.h" // for -dbcache defaults
 #include "intro.h" 
+#include "policy/policy.h" // for DEFAULT_BLOCK_ACCEPT_SIZE
 
 #ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
@@ -102,6 +103,14 @@ void OptionsModel::Init(bool resetSettings)
 
     if (!settings.contains("strDataDir"))
         settings.setValue("strDataDir", Intro::getDefaultDataDirectory());
+    if (!settings.contains("blockSizeAcceptLimitBytes"))
+        settings.setValue("blockSizeAcceptLimitBytes", static_cast<int32_t>(round(DEFAULT_BLOCK_ACCEPT_SIZE * 1e6)));
+    if (mapArgs.count("-blocksizeacceptlimit"))
+        addOverriddenOption("-blocksizeacceptlimit");
+    else if (mapArgs.count("-excessiveblocksize"))
+        addOverriddenOption("-excessiveblocksize");
+    else
+        SoftSetArg("-excessiveblocksize", settings.value("blockSizeAcceptLimitBytes").toString().toStdString());
 
     // Wallet
 #ifdef ENABLE_WALLET
@@ -247,6 +256,8 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
             return settings.value("nThreadsScriptVerif");
         case Listen:
             return settings.value("fListen");
+        case BlockSizeAcceptLimit:
+            return settings.value("blockSizeAcceptLimitBytes").toInt() / 1e6;
         default:
             return QVariant();
         }
@@ -393,6 +404,14 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
             if (settings.value("fListen") != value) {
                 settings.setValue("fListen", value);
                 setRestartRequired(true);
+            }
+            break;
+        case BlockSizeAcceptLimit: {
+                int32_t valueBytes = round(value.toDouble() * 1e6);
+                if (settings.value("blockSizeAcceptLimitBytes") != valueBytes) {
+                    settings.setValue("blockSizeAcceptLimitBytes", valueBytes);
+                    setRestartRequired(true);
+                }
             }
             break;
         default:
