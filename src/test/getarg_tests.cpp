@@ -165,9 +165,20 @@ BOOST_AUTO_TEST_CASE(blockSizeAcceptLimit)
     ResetArgs("-excessiveblocksize=5004000");
     BOOST_CHECK_EQUAL(Policy::blockSizeAcceptLimit(), 5004000);
 
+    ResetArgs("-blocksizeacceptlimitbytes=5004000");
+    BOOST_CHECK_EQUAL(Policy::blockSizeAcceptLimit(), 5004000);
+
     // blocksizeacceptlimit always wins
     ResetArgs("-excessiveblocksize=5004000 -blocksizeacceptlimit=1.2");
     BOOST_CHECK_EQUAL(Policy::blockSizeAcceptLimit(), 1200000);
+
+    // blocksizeacceptlimit always wins
+    ResetArgs("-blocksizeacceptlimitbytes=5004000 -blocksizeacceptlimit=1.2");
+    BOOST_CHECK_EQUAL(Policy::blockSizeAcceptLimit(), 1200000);
+
+    // blocksizeacceptlimitbytes always wins
+    ResetArgs("-excessiveblocksize=5004000 -blocksizeacceptlimitbytes=6004000");
+    BOOST_CHECK_EQUAL(Policy::blockSizeAcceptLimit(), 6004000);
 
     ResetArgs("-blocksizeacceptlimit=1.2");
     BOOST_CHECK_EQUAL(Policy::blockSizeAcceptLimit(), 1200000);

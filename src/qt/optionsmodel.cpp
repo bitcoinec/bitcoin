@@ -104,13 +104,15 @@ void OptionsModel::Init(bool resetSettings)
     if (!settings.contains("strDataDir"))
         settings.setValue("strDataDir", Intro::getDefaultDataDirectory());
     if (!settings.contains("blockSizeAcceptLimitBytes"))
-        settings.setValue("blockSizeAcceptLimitBytes", static_cast<int32_t>(round(DEFAULT_BLOCK_ACCEPT_SIZE * 1e6)));
+        settings.setValue("blockSizeAcceptLimitBytes", DEFAULT_BLOCK_ACCEPT_SIZE);
     if (mapArgs.count("-blocksizeacceptlimit"))
         addOverriddenOption("-blocksizeacceptlimit");
+    else if (mapArgs.count("-blocksizeacceptlimitbytes"))
+        addOverriddenOption("-blocksizeacceptlimitbytes");
     else if (mapArgs.count("-excessiveblocksize"))
         addOverriddenOption("-excessiveblocksize");
     else
-        SoftSetArg("-excessiveblocksize", settings.value("blockSizeAcceptLimitBytes").toString().toStdString());
+        SoftSetArg("-blocksizeacceptlimitbytes", settings.value("blockSizeAcceptLimitBytes").toString().toStdString());
 
     // Wallet
 #ifdef ENABLE_WALLET
