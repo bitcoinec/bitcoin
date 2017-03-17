@@ -50,6 +50,7 @@
 
 #include <string>
 #include <vector>
+#include <stdint.h>
 
 static const int CLIENT_VERSION =
                            1000000 * CLIENT_VERSION_MAJOR
