@@ -88,12 +88,12 @@ std::string FormatFullVersion()
 /** 
  * Format the subversion field according to BIP 14 spec (https://github.com/bitcoin/bips/blob/master/bip-0014.mediawiki) 
  */
-std::string FormatSubVersion(const std::string& name, int nClientVersion, std::vector<std::string> comments, uint32_t nSizeLimit)
+std::string FormatSubVersion(const std::string& name, int nClientVersion, std::vector<std::string> comments, uint32_t nMaxBlockSize)
 {
-    if (nSizeLimit) {
+    if (nMaxBlockSize) {
         // Announce our excessive block acceptence.
         std::stringstream ss;
-        double dMaxBlockSize = static_cast<double>(nSizeLimit) / 1000000;
+        double dMaxBlockSize = static_cast<double>(nMaxBlockSize) / 1000000;
         ss << "EB" << std::setprecision(static_cast<int>(std::log10(dMaxBlockSize))+7) << dMaxBlockSize;
         comments.insert(comments.end(), ss.str());
     }

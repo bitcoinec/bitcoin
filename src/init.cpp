@@ -1225,17 +1225,16 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
     RegisterNodeSignals(GetNodeSignals());
 
     // sanitize comments per BIP-0014, format user agent and check total size
-    std::vector<std::string> uacomments;
     if (mapMultiArgs.count("-uacomment")) {
         BOOST_FOREACH(std::string cmt, mapMultiArgs.at("-uacomment"))
         {
             if (cmt != SanitizeString(cmt, SAFE_CHARS_UA_COMMENT))
                 return InitError(strprintf(_("User Agent comment (%s) contains unsafe characters."), cmt));
-            uacomments.push_back(cmt);
+            vUAComments.push_back(cmt);
         }
     }
     std::int32_t BlockSizeLimit = Policy::blockSizeAcceptLimit(); 
-    size_t userAgentLen = FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, uacomments, BlockSizeLimit).size();
+    size_t userAgentLen = FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, vUAComments, BlockSizeLimit).size();
     if (userAgentLen > MAX_SUBVERSION_LENGTH) {
         return InitError(strprintf(_("Total length of network version string (%i) exceeds maximum length (%i). Reduce the number or size of uacomments."),
             userAgentLen, MAX_SUBVERSION_LENGTH));

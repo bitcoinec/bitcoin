@@ -471,8 +471,8 @@ extern bool fRelayTxes;
 
 extern limitedmap<uint256, int64_t> mapAlreadyAskedFor;
 
-/** Subversion as sent to the P2P network in `version` messages */
-extern std::string strSubVersion;
+/** Comments in subversion as sent to the P2P network in `version` messages */
+extern std::vector<std::string> vUAComments;
 
 struct LocalServiceInfo {
     int nScore;
