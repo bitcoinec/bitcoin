@@ -50,6 +50,7 @@
 
 #include <string>
 #include <vector>
+#include <stdint.h>
 
 static const int CLIENT_VERSION =
                            1000000 * CLIENT_VERSION_MAJOR
@@ -62,7 +63,7 @@ extern const std::string CLIENT_BUILD;
 
 
 std::string FormatFullVersion();
-std::string FormatSubVersion(const std::string& name, int nClientVersion, const std::vector<std::string>& comments);
+std::string FormatSubVersion(const std::string& name, int nClientVersion, std::vector<std::string> comments, uint32_t nMaxBlockSize);
 
 #endif // WINDRES_PREPROC
 

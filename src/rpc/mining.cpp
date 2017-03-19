@@ -377,7 +377,7 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
             "  ],\n"
             "  \"noncerange\" : \"00000000ffffffff\",(string) A range of valid nonces\n"
             "  \"sigoplimit\" : n,                 (numeric) limit of sigops in blocks\n"
-            "  \"sizelimit\" : n,                  (numeric) limit of block size\n"
+            "  \"sizelimit\" : n,                  (numeric) limit of block size. (deprecated)\n"
             "  \"weightlimit\" : n,                (numeric) limit of block weight\n"
             "  \"curtime\" : ttt,                  (numeric) current timestamp in seconds since epoch (Jan 1 1970 GMT)\n"
             "  \"bits\" : \"xxxxxxxx\",              (string) compressed target of next block\n"
@@ -599,9 +599,6 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
         transactions.push_back(entry);
     }
 
-    UniValue aux(UniValue::VOBJ);
-    aux.push_back(Pair("flags", HexStr(COINBASE_FLAGS.begin(), COINBASE_FLAGS.end())));
-
     arith_uint256 hashTarget = arith_uint256().SetCompact(pblock->nBits);
 
     UniValue aMutable(UniValue::VARR);
@@ -669,7 +666,6 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
 
     result.push_back(Pair("previousblockhash", pblock->hashPrevBlock.GetHex()));
     result.push_back(Pair("transactions", transactions));
-    result.push_back(Pair("coinbaseaux", aux));
     result.push_back(Pair("coinbasevalue", (int64_t)pblock->vtx[0]->vout[0].nValue));
     result.push_back(Pair("longpollid", chainActive.Tip()->GetBlockHash().GetHex() + i64tostr(nTransactionsUpdatedLast)));
     result.push_back(Pair("target", hashTarget.GetHex()));
@@ -683,7 +679,8 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
     }
     result.push_back(Pair("sigoplimit", nSigOpLimit));
     if (fPreSegWit) {
-        result.push_back(Pair("sizelimit", (int64_t)MAX_BLOCK_BASE_SIZE));
+        int64_t sizeLimit = 32E6; // lets have a nice big default, the goal is to remove this from the API
+        result.push_back(Pair("sizelimit", sizeLimit));
     } else {
         result.push_back(Pair("sizelimit", (int64_t)MAX_BLOCK_SERIALIZED_SIZE));
         result.push_back(Pair("weightlimit", (int64_t)MAX_BLOCK_WEIGHT));
