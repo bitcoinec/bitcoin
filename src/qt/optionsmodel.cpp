@@ -105,11 +105,11 @@ void OptionsModel::Init(bool resetSettings)
         settings.setValue("strDataDir", Intro::getDefaultDataDirectory());
     if (!settings.contains("blockSizeAcceptLimitBytes"))
         settings.setValue("blockSizeAcceptLimitBytes", DEFAULT_BLOCK_ACCEPT_SIZE);
-    if (mapArgs.count("-blocksizeacceptlimit"))
+    if (!GetArg("-blocksizeacceptlimit", "").empty())
         addOverriddenOption("-blocksizeacceptlimit");
-    else if (mapArgs.count("-blocksizeacceptlimitbytes"))
+    else if (!GetArg("-blocksizeacceptlimitbytes", "").empty())
         addOverriddenOption("-blocksizeacceptlimitbytes");
-    else if (mapArgs.count("-excessiveblocksize"))
+    else if (!GetArg("-excessiveblocksize", "").empty())
         addOverriddenOption("-excessiveblocksize");
     else
         SoftSetArg("-blocksizeacceptlimitbytes", settings.value("blockSizeAcceptLimitBytes").toString().toStdString());
