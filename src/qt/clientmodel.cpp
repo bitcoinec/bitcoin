@@ -215,7 +215,7 @@ QString ClientModel::formatFullVersion() const
 
 QString ClientModel::formatSubVersion() const
 {
-    return QString::fromStdString(strSubVersion);
+    return QString::fromStdString(FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, vUAComments, 0));
 }
 
 bool ClientModel::isReleaseVersion() const

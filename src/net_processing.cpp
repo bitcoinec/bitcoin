@@ -9,6 +9,7 @@
 #include "arith_uint256.h"
 #include "blockencodings.h"
 #include "chainparams.h"
+#include "clientversion.h"
 #include "consensus/validation.h"
 #include "hash.h"
 #include "init.h"
@@ -247,12 +248,14 @@ void PushNodeVersion(CNode *pnode, CConnman& connman, int64_t nTime)
     ServiceFlags nLocalNodeServices = pnode->GetLocalServices();
     uint64_t nonce = pnode->GetLocalNonce();
     int nNodeStartingHeight = pnode->GetMyStartingHeight();
+    std::int32_t nMaxBlockSize = Policy::blockSizeAcceptLimit();
     NodeId nodeid = pnode->GetId();
     CAddress addr = pnode->addr;
 
     CAddress addrYou = (addr.IsRoutable() && !IsProxy(addr) ? addr : CAddress(CService(), addr.nServices));
     CAddress addrMe = CAddress(CService(), nLocalNodeServices);
 
+    std::string strSubVersion = FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, vUAComments, nMaxBlockSize);
     connman.PushMessage(pnode, CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERSION, PROTOCOL_VERSION, (uint64_t)nLocalNodeServices, nTime, addrYou, addrMe,
             nonce, strSubVersion, nNodeStartingHeight, ::fRelayTxes));
 

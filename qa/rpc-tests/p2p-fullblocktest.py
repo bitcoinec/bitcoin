@@ -25,6 +25,8 @@ We use the testing framework in which we expect a particular answer from
 each test.
 '''
 
+MAX_BLOCK_BASE_SIZE = 1000000
+
 #  Use this class for tests that require behavior other than normal "mininode" behavior.
 #  For now, it is used to serialize a bloated varint (b64).
 class CBrokenBlock(CBlock):
@@ -61,6 +63,11 @@ class FullBlockTest(ComparisonTestFramework):
         self.coinbase_pubkey = self.coinbase_key.get_pubkey()
         self.tip = None
         self.blocks = {}
+
+    def setup_nodes(self):
+        return start_nodes(4, self.options.tmpdir,
+                extra_args = [["-maxblocksize=1000000", "--blocksizeacceptlimit=1"]])
+
 
     def add_options(self, parser):
         super().add_options(parser)
@@ -377,7 +384,7 @@ class FullBlockTest(ComparisonTestFramework):
         tx.vout = [CTxOut(0, script_output)]
         b24 = update_block(24, [tx])
         assert_equal(len(b24.serialize()), MAX_BLOCK_BASE_SIZE+1)
-        yield rejected(RejectResult(16, b'bad-blk-length'))
+        yield rejected()
 
         block(25, spend=out[7])
         yield rejected()
